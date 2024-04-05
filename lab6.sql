@@ -85,22 +85,13 @@ WHERE h.name = 'Космос'
 # и 2154 являются примером неправильного состояния, которые необходимо найти.
 # Результирующий кортеж выборки должен содержать информацию
 # о двух конфликтующих номерах.
-SELECT rib1.id_room_in_booking AS conflicting_booking_1,
-       rib1.id_booking,
-       rib1.id_room,
-       rib1.checkin_date,
-       rib1.checkout_date,
-       rib2.id_room_in_booking AS conflicting_booking_2,
-       rib2.id_booking,
-       rib2.id_room,
-       rib2.checkin_date,
-       rib2.checkout_date
+SELECT DISTINCT rib1.*,
+                rib2.*
 FROM room_in_booking rib1
          JOIN room_in_booking rib2 ON rib1.id_room = rib2.id_room
-    AND
-                                      rib1.id_room_in_booking != rib2.id_room_in_booking
 WHERE rib1.checkin_date < rib2.checkout_date
-  AND rib1.checkout_date > rib2.checkin_date;
+  AND rib1.checkout_date > rib2.checkin_date
+  AND rib1.id_room_in_booking < rib2.id_room_in_booking;
 
 # 8 Создать бронирование в транзакции
 START TRANSACTION;
